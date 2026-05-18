@@ -24,7 +24,7 @@ function FormRight() {
           href="/"
           className="inline-flex items-center gap-2 text-white/50 hover:text-white text-xs transition-colors"
         >
-          <ArrowLeft size={14} /> Back to GoogolPlex
+          <ArrowLeft size={14} /> Back to home
         </Link>
 
         {stage === "request" ? (

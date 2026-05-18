@@ -62,7 +62,7 @@ export function AuthHero({ heading, tagline, steps }: AuthHeroProps) {
         placeholderClass="placeholder-video"
         className="absolute inset-0 w-full h-full object-cover"
       />
-      <div className="absolute inset-0 bg-black/35 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/40 pointer-events-none" />
 
       <motion.div
         initial="hidden"
