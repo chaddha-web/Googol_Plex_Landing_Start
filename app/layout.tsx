@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AccessGate } from "@/components/access-gate";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -16,7 +17,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-black text-white">{children}</body>
+      <body className="bg-black text-white">
+        {children}
+        <AccessGate />
+      </body>
     </html>
   );
 }
