@@ -33,15 +33,12 @@ export function SiteNav() {
             ))}
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <Link href="/signup" className="text-white text-sm font-medium px-2">
-            Sign Up
-          </Link>
+        <div className="flex items-center">
           <Link
-            href="/login"
+            href="/signup"
             className="liquid-glass rounded-full px-6 py-2 text-white text-sm font-medium"
           >
-            Login
+            Get Started
           </Link>
         </div>
       </div>

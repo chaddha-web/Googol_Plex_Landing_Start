@@ -45,32 +45,31 @@ export function Hero() {
               ))}
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center">
             <Link
               href="/signup"
-              className="text-white text-sm font-medium px-2"
-            >
-              Sign Up
-            </Link>
-            <Link
-              href="/login"
               className="liquid-glass rounded-full px-6 py-2 text-white text-sm font-medium"
             >
-              Login
+              Get Started
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Hero content */}
-      <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-12 text-center -translate-y-[10%] md:-translate-y-[20%]">
+      {/* Hero content — centered: heading → subtitle → email pill */}
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-12 text-center">
         <h1 className="font-serif text-white tracking-tight whitespace-nowrap text-6xl sm:text-7xl md:text-8xl lg:text-9xl">
           Know it <em className="font-serif-i">all</em>
         </h1>
 
+        <p className="mt-6 text-white text-sm leading-relaxed px-4 max-w-xl">
+          Stay updated with the latest news and insights. Subscribe to our
+          newsletter today and never miss out on exciting updates.
+        </p>
+
         <form
           onSubmit={(e) => e.preventDefault()}
-          className="mt-8 max-w-xl w-full"
+          className="mt-8 w-full max-w-xl"
         >
           <div className="liquid-glass rounded-full pl-6 pr-2 py-2 flex items-center gap-3">
             <input
@@ -87,29 +86,28 @@ export function Hero() {
             </button>
           </div>
         </form>
-
-        <p className="mt-6 text-white text-sm leading-relaxed px-4 max-w-xl">
-          Stay updated with the latest news and insights. Subscribe to our newsletter
-          today and never miss out on exciting updates.
-        </p>
-
-        <button className="mt-8 liquid-glass rounded-full px-8 py-3 text-white text-sm font-medium hover:bg-white/5 transition-colors">
-          Read the manifesto
-        </button>
       </div>
 
-      {/* Social icons */}
-      <div className="relative z-10 flex justify-center gap-4 pb-12">
-        {[Camera, Sparkles, Globe].map((Ico, i) => (
-          <Link
-            key={i}
-            href="#"
-            aria-label="Social link"
-            className="liquid-glass rounded-full p-4 text-white/80 hover:text-white hover:bg-white/5 transition-all"
-          >
-            <Ico size={20} strokeWidth={1.6} />
-          </Link>
-        ))}
+      {/* Bottom row: manifesto (left) — socials (right) */}
+      <div className="relative z-10 w-full flex flex-col md:flex-row md:items-end md:justify-between gap-6 px-6 md:px-12 pb-12">
+        <div className="flex md:justify-start justify-center">
+          <button className="liquid-glass rounded-full px-8 py-3 text-white text-sm font-medium hover:bg-white/5 transition-colors">
+            Read the manifesto
+          </button>
+        </div>
+
+        <div className="flex md:justify-end justify-center gap-4">
+          {[Camera, Sparkles, Globe].map((Ico, i) => (
+            <Link
+              key={i}
+              href="#"
+              aria-label="Social link"
+              className="liquid-glass rounded-full p-4 text-white/80 hover:text-white hover:bg-white/5 transition-all"
+            >
+              <Ico size={20} strokeWidth={1.6} />
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );
