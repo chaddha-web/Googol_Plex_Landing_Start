@@ -96,7 +96,7 @@ export function Hero() {
             download
             className="liquid-glass rounded-full px-8 py-3 text-white text-sm font-medium hover:bg-white/5 transition-colors"
           >
-            Whitepaper
+            View Whitepaper
           </a>
         </div>
 
