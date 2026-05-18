@@ -20,7 +20,7 @@ export function Hero() {
 
       {/* Nav */}
       <nav className="relative z-20 px-6 py-6">
-        <div className="liquid-glass rounded-full max-w-5xl mx-auto px-6 py-3 grid grid-cols-[1fr_auto_1fr] items-center">
+        <div className="liquid-glass rounded-full max-w-5xl mx-auto px-6 py-3 flex justify-between items-center md:grid md:grid-cols-[1fr_auto_1fr]">
           {/* Left — logo */}
           <div className="flex items-center justify-self-start">
             <Link href="/" className="flex items-center gap-2 text-white">
