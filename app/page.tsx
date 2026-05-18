@@ -1,3 +1,4 @@
+import { LandingShell } from "@/components/landing-shell";
 import { Hero } from "@/components/sections/hero";
 import { AboutSection } from "@/components/sections/about";
 import { FeaturedVideoSection } from "@/components/sections/featured";
@@ -11,17 +12,19 @@ import { Footer } from "@/components/sections/footer";
 
 export default function Page() {
   return (
-    <main className="bg-black text-base">
-      <Hero />
-      <AboutSection />
-      <FeaturedVideoSection />
-      <PhilosophySection />
-      <TrustSection />
-      <ServicesSection />
-      <BenefitSection />
-      <TestimonialsSection />
-      <FAQSection />
-      <Footer />
-    </main>
+    <LandingShell>
+      <main className="bg-black text-base">
+        <Hero />
+        <AboutSection />
+        <FeaturedVideoSection />
+        <PhilosophySection />
+        <TrustSection />
+        <ServicesSection />
+        <BenefitSection />
+        <TestimonialsSection />
+        <FAQSection />
+        <Footer />
+      </main>
+    </LandingShell>
   );
 }
