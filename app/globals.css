@@ -109,6 +109,23 @@ video {
   display: block;
 }
 
+/* ===== Trust logos marquee ===== */
+@keyframes trustMarquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.trust-track {
+  display: flex;
+  width: max-content;
+  gap: 56px;
+  animation: trustMarquee 70s linear infinite;
+}
+.trust-track:hover { animation-play-state: paused; }
+.trust-fade {
+  mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+}
+
 /* Faint drifting starfield used behind the 404 page */
 .stars {
   background-image:

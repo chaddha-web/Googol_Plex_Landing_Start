@@ -22,10 +22,17 @@ export function Hero() {
       <nav className="relative z-20 px-6 py-6">
         <div className="liquid-glass rounded-full max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
           <div className="flex items-center">
-            <div className="flex items-center gap-2 text-white">
-              <Globe size={22} strokeWidth={1.6} />
-              <span className="font-semibold text-lg tracking-tight">Googolplex</span>
-            </div>
+            <Link href="/" className="flex items-center gap-2 text-white">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/icon.png"
+                alt="GoogolPlex"
+                className="h-7 w-auto object-contain"
+              />
+              <span className="font-semibold text-lg tracking-tight">
+                GoogolPlex
+              </span>
+            </Link>
             <div className="hidden md:flex gap-8 ml-8">
               {["Features", "Pricing", "About"].map((l) => (
                 <Link

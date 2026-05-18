@@ -10,8 +10,6 @@ import { ArrowLeft } from "@/components/icons";
 function FormRight() {
   const [stage, setStage] = useState<"request" | "verify">("request");
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
 
   return (
@@ -33,11 +31,11 @@ function FormRight() {
           <>
             <div className="space-y-2">
               <h2 className="text-3xl font-medium tracking-tight">
-                Create New Profile
+                Sign in to your account
               </h2>
               <p className="text-white/40 text-sm">
-                Input your basic details — we&apos;ll send a one-time code to
-                verify it&apos;s you.
+                Enter your email — we&apos;ll send a one-time code to sign you
+                in.
               </p>
             </div>
 
@@ -48,43 +46,6 @@ function FormRight() {
               }}
               className="space-y-5"
             >
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label
-                    htmlFor="first-name"
-                    className="text-sm font-medium text-white block"
-                  >
-                    First Name
-                  </label>
-                  <input
-                    id="first-name"
-                    type="text"
-                    required
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="Jane"
-                    className="bg-[#1A1A1A] border-none rounded-xl h-11 w-full px-4 text-white placeholder:text-white/20 focus:ring-2 focus:ring-white/20 transition-shadow"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="last-name"
-                    className="text-sm font-medium text-white block"
-                  >
-                    Last Name
-                  </label>
-                  <input
-                    id="last-name"
-                    type="text"
-                    required
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Doe"
-                    className="bg-[#1A1A1A] border-none rounded-xl h-11 w-full px-4 text-white placeholder:text-white/20 focus:ring-2 focus:ring-white/20 transition-shadow"
-                  />
-                </div>
-              </div>
-
               <div className="space-y-2">
                 <label
                   htmlFor="email"
@@ -123,10 +84,7 @@ function FormRight() {
               </p>
             </div>
 
-            <form
-              onSubmit={(e) => e.preventDefault()}
-              className="space-y-6"
-            >
+            <form onSubmit={(e) => e.preventDefault()} className="space-y-6">
               <OtpCells value={otp} onChange={setOtp} />
 
               <p className="text-xs text-white/40 text-center">
@@ -145,7 +103,7 @@ function FormRight() {
                 disabled={otp.some((d) => !d)}
                 className="w-full h-14 bg-white text-black font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                Verify & continue
+                Verify & sign in
               </button>
 
               <button
@@ -163,12 +121,12 @@ function FormRight() {
         )}
 
         <p className="text-center text-sm text-white/50">
-          Member of the team?{" "}
+          New to GoogolPlex?{" "}
           <Link
-            href="/login"
+            href="/signup"
             className="text-white font-medium hover:underline"
           >
-            Log in
+            Create an account
           </Link>
         </p>
       </motion.div>
@@ -176,16 +134,16 @@ function FormRight() {
   );
 }
 
-export default function SignupPage() {
+export default function LoginPage() {
   return (
     <main className="flex min-h-screen w-full bg-black selection:bg-white/30 p-2 transition-all duration-500 lg:h-screen lg:overflow-hidden lg:p-4">
       <AuthHero
-        heading="Join GoogolPlex"
-        tagline="Follow these 3 quick phases to activate your space."
+        heading="Welcome back"
+        tagline="Step into your studio with a single sign-in."
         steps={[
-          { number: 1, text: "Register your identity" },
-          { number: 2, text: "Configure your studio" },
-          { number: 3, text: "Finalize your profile" }
+          { number: 1, text: "Sign in securely" },
+          { number: 2, text: "Pick up where you left off" },
+          { number: 3, text: "Continue creating" }
         ]}
       />
       <FormRight />
