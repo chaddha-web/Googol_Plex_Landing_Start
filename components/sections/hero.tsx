@@ -13,7 +13,7 @@ export function Hero() {
         <FadeLoopVideo
           src={VIDEOS.hero}
           placeholderClass="placeholder-video"
-          className="absolute inset-0 w-full h-full object-cover object-bottom"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/10 to-black/60 pointer-events-none" />
       </div>
