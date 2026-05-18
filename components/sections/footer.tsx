@@ -41,7 +41,7 @@ function Column({ title, items }: { title: string; items: string[] }) {
 
 export function Footer() {
   return (
-    <section className="relative w-full overflow-hidden bg-black min-h-[100vh] flex flex-col">
+    <section id="contact" className="relative w-full overflow-hidden bg-black min-h-[100vh] flex flex-col scroll-mt-24">
       <FooterBgVideo src={VIDEOS.footer} />
       <div className="absolute inset-0 bg-black/25 z-[1] pointer-events-none" />
       <div className="absolute inset-x-0 bottom-0 h-72 bg-gradient-to-t from-black/60 to-transparent z-[1] pointer-events-none" />

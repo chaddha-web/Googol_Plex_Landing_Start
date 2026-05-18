@@ -22,13 +22,19 @@ export function SiteNav() {
             </span>
           </Link>
           <div className="hidden md:flex gap-8 ml-8">
-            {["Features", "Pricing", "About"].map((l) => (
+            {[
+              { label: "About", href: "/#about" },
+              { label: "Partners", href: "/#partners" },
+              { label: "Vision", href: "/#vision" },
+              { label: "Benefit", href: "/#benefit" },
+              { label: "Contact", href: "/#contact" }
+            ].map((l) => (
               <Link
-                key={l}
-                href="#"
+                key={l.label}
+                href={l.href}
                 className="text-white/80 hover:text-white text-sm font-medium transition-colors"
               >
-                {l}
+                {l.label}
               </Link>
             ))}
           </div>

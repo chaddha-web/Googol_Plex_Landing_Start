@@ -9,8 +9,9 @@ export function AboutSection() {
 
   return (
     <section
+      id="about"
       ref={ref}
-      className="bg-black pt-32 md:pt-44 pb-10 md:pb-14 px-6 overflow-hidden bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.03)_0%,_transparent_70%)]"
+      className="bg-black pt-32 md:pt-44 pb-10 md:pb-14 px-6 overflow-hidden bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.03)_0%,_transparent_70%)] scroll-mt-24"
     >
       <div className="max-w-6xl mx-auto">
         <motion.p

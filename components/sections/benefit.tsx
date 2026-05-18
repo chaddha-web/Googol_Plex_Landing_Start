@@ -49,7 +49,7 @@ function Orb({ size = 180 }: { size?: number }) {
 
 export function BenefitSection() {
   return (
-    <section className="bg-black py-20 md:py-28 px-6">
+    <section id="benefit" className="bg-black py-20 md:py-28 px-6 scroll-mt-24">
       <div className="max-w-7xl mx-auto bg-white text-neutral-900 rounded-3xl px-6 md:px-12 py-12 md:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-start">
           <motion.div {...enter(0)} className="lg:col-span-4">

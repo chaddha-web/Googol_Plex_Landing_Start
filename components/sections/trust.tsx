@@ -23,7 +23,7 @@ const enter = (i: number = 0) => ({
 
 export function TrustSection() {
   return (
-    <section className="bg-[#f6f5f1] text-neutral-900 py-24 md:py-32 px-6">
+    <section id="partners" className="bg-[#f6f5f1] text-neutral-900 py-24 md:py-32 px-6 scroll-mt-24">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-start mb-16 md:mb-20">
           <motion.h2
