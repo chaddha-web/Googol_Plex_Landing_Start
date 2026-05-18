@@ -3,6 +3,12 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { VIDEOS } from "@/lib/assets";
+import { getCookie, setCookie } from "@/lib/cookies";
+
+// Bumped any time the asset list changes — invalidates the warm-cache cookie
+// so visitors re-preload when we ship new videos.
+const WARM_COOKIE = "gplex.videos_warm";
+const WARM_VERSION = "1";
 
 // Only videos actually used on the landing page — keeps the loader quick and
 // avoids prefetching auth/secondary assets here.
@@ -23,6 +29,9 @@ const ASSETS = [
 export function LandingShell({ children }: { children: React.ReactNode }) {
   const [loaded, setLoaded] = useState(0);
   const [ready, setReady] = useState(false);
+  // Don't render the loader until we've checked the warm-cache cookie — keeps
+  // returning visitors from seeing a 1-frame flash of the splash.
+  const [cookieChecked, setCookieChecked] = useState(false);
 
   // Lock body scroll while the loader is visible.
   useEffect(() => {
@@ -37,6 +46,16 @@ export function LandingShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    // Return visitors: cookie says the videos were already warmed in a recent
+    // session, so the browser HTTP cache should still have them. Skip the
+    // loader entirely and let the on-page <video>s render straight away.
+    if (getCookie(WARM_COOKIE) === WARM_VERSION) {
+      setReady(true);
+      setCookieChecked(true);
+      return;
+    }
+    setCookieChecked(true);
+
     // Hard ceiling — never block the user behind a stalled CDN response.
     const MAX_WAIT_MS = 8000;
     const hardTimer = window.setTimeout(() => setReady(true), MAX_WAIT_MS);
@@ -49,6 +68,11 @@ export function LandingShell({ children }: { children: React.ReactNode }) {
       done += 1;
       setLoaded(done);
       if (done >= total) {
+        // Mark this browser as "warm" so the next visit skips the splash
+        // (the videos themselves stay in the browser HTTP cache).
+        setCookie(WARM_COOKIE, WARM_VERSION, {
+          maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+        });
         // small grace so the progress bar gets to 100% before the fade
         setTimeout(() => setReady(true), 250);
       }
@@ -98,7 +122,7 @@ export function LandingShell({ children }: { children: React.ReactNode }) {
       </motion.div>
 
       <AnimatePresence>
-        {!ready && (
+        {cookieChecked && !ready && (
           <motion.div
             key="loader"
             initial={{ opacity: 1 }}
