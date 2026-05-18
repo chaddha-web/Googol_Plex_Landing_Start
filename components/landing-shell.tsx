@@ -4,7 +4,16 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { VIDEOS } from "@/lib/assets";
 
-const ASSETS = Object.values(VIDEOS);
+// Only videos actually used on the landing page — keeps the loader quick and
+// avoids prefetching auth/secondary assets here.
+const ASSETS = [
+  VIDEOS.hero,
+  VIDEOS.featured,
+  VIDEOS.philosophy,
+  VIDEOS.serviceStrategy,
+  VIDEOS.serviceCraft,
+  VIDEOS.footer
+];
 
 /**
  * Full-screen loader shown until every hero/background video is buffered
