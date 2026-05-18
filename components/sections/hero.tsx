@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight, Camera, Globe, Sparkles } from "@/components/icons";
-import { FadeLoopVideo } from "@/components/video";
+import { LoopVideo } from "@/components/video";
 import { VIDEOS } from "@/lib/assets";
 
 export function Hero() {
@@ -10,7 +10,7 @@ export function Hero() {
     <section className="min-h-screen relative overflow-hidden flex flex-col">
       {/* Background video */}
       <div className="absolute inset-0 w-full h-full">
-        <FadeLoopVideo
+        <LoopVideo
           src={VIDEOS.hero}
           placeholderClass="placeholder-video"
           className="absolute inset-0 w-full h-full object-cover object-center"
