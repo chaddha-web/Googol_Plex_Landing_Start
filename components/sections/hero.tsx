@@ -91,9 +91,13 @@ export function Hero() {
       {/* Bottom row: manifesto (left) — socials (right) */}
       <div className="relative z-10 w-full flex flex-col md:flex-row md:items-end md:justify-between gap-6 px-6 md:px-12 pb-12">
         <div className="flex md:justify-start justify-center">
-          <button className="liquid-glass rounded-full px-8 py-3 text-white text-sm font-medium hover:bg-white/5 transition-colors">
-            Read the manifesto
-          </button>
+          <a
+            href="/whitepaper.pdf"
+            download
+            className="liquid-glass rounded-full px-8 py-3 text-white text-sm font-medium hover:bg-white/5 transition-colors"
+          >
+            Whitepaper
+          </a>
         </div>
 
         <div className="flex md:justify-end justify-center gap-4">
