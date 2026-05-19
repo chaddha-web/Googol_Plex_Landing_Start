@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { AuthHero } from "@/components/auth-hero";
 import { OtpCells } from "@/components/otp-cells";
 import { ArrowLeft } from "@/components/icons";
+import { fetchWithRetry, newIdempotencyKey } from "@/lib/fetch-retry";
 
 function FormRight() {
   const router = useRouter();
@@ -18,26 +19,45 @@ function FormRight() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleRequest(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    try {
-      const res = await fetch("/api/otp/request", {
+  // One idempotency key per "intended OTP request" — survives retries inside
+  // fetchWithRetry so the server treats them as the same logical send.
+  // Bumped when the user explicitly resends or starts a new attempt.
+  const requestKeyRef = useRef<string>(newIdempotencyKey());
+  const verifyKeyRef = useRef<string>(newIdempotencyKey());
+
+  async function sendRequest() {
+    return fetchWithRetry(
+      "/api/otp/request",
+      {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Idempotency-Key": requestKeyRef.current
+        },
         body: JSON.stringify({
           email,
           mode: "signup",
           firstName,
           lastName
         })
-      });
+      },
+      { retries: 3, baseDelayMs: 500 }
+    );
+  }
+
+  async function handleRequest(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    requestKeyRef.current = newIdempotencyKey();
+    try {
+      const res = await sendRequest();
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Could not send the code.");
         return;
       }
+      verifyKeyRef.current = newIdempotencyKey();
       setStage("verify");
       setOtp(["", "", "", "", "", ""]);
     } catch {
@@ -52,15 +72,25 @@ function FormRight() {
     setError(null);
     setLoading(true);
     try {
-      const res = await fetch("/api/otp/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: otp.join("") })
-      });
+      const res = await fetchWithRetry(
+        "/api/otp/verify",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Idempotency-Key": verifyKeyRef.current
+          },
+          body: JSON.stringify({ code: otp.join("") })
+        },
+        { retries: 2, baseDelayMs: 400 }
+      );
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Could not verify the code.");
         if (data.attemptsLeft === undefined) setOtp(["", "", "", "", "", ""]);
+        // Fresh key for the next attempt so the user isn't locked into the
+        // same idempotent slot.
+        verifyKeyRef.current = newIdempotencyKey();
         return;
       }
       router.push("/");
@@ -75,17 +105,9 @@ function FormRight() {
     setOtp(["", "", "", "", "", ""]);
     setError(null);
     setLoading(true);
+    requestKeyRef.current = newIdempotencyKey();
     try {
-      const res = await fetch("/api/otp/request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          mode: "signup",
-          firstName,
-          lastName
-        })
-      });
+      const res = await sendRequest();
       const data = await res.json();
       if (!res.ok) setError(data.error || "Could not resend.");
     } catch {

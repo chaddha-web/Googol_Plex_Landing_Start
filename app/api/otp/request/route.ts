@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import {
   OTP_COOKIE,
   OTP_TTL_SECONDS,
   generateCode,
   hashCode,
   isValidEmail,
+  isValidIdempotencyKey,
   signPayload,
+  verifyPayload,
   type OtpMode,
   type OtpPayload
 } from "@/lib/otp";
@@ -19,6 +22,14 @@ type Body = {
   mode?: unknown;
   firstName?: unknown;
   lastName?: unknown;
+};
+
+const cookieOpts = {
+  httpOnly: true as const,
+  sameSite: "lax" as const,
+  secure: process.env.NODE_ENV === "production",
+  path: "/",
+  maxAge: OTP_TTL_SECONDS
 };
 
 export async function POST(req: Request) {
@@ -55,9 +66,33 @@ export async function POST(req: Request) {
     }
   }
 
+  const normalisedEmail = email.trim().toLowerCase();
+  const rawKey = req.headers.get("idempotency-key") || req.headers.get("x-idempotency-key");
+  const idempotencyKey = isValidIdempotencyKey(rawKey) ? rawKey : undefined;
+
+  // Idempotency check — if the existing OTP cookie was created with the same
+  // idempotency key (and is still valid / matches mode + email), short-circuit:
+  // return success WITHOUT sending another email. This makes retried POSTs and
+  // double-clicks safe.
+  if (idempotencyKey) {
+    const existing = cookies().get(OTP_COOKIE)?.value;
+    if (existing) {
+      const prev = verifyPayload(existing);
+      if (
+        prev &&
+        prev.idempotencyKey === idempotencyKey &&
+        prev.email === normalisedEmail &&
+        prev.mode === mode &&
+        Date.now() < prev.expiresAt
+      ) {
+        return NextResponse.json({ ok: true, replayed: true });
+      }
+    }
+  }
+
   const code = generateCode();
   const payload: OtpPayload = {
-    email: email.trim().toLowerCase(),
+    email: normalisedEmail,
     codeHash: hashCode(code),
     mode: mode as OtpMode,
     expiresAt: Date.now() + OTP_TTL_SECONDS * 1000,
@@ -67,7 +102,8 @@ export async function POST(req: Request) {
           firstName: (firstName as string).trim(),
           lastName: (lastName as string).trim()
         }
-      : {})
+      : {}),
+    ...(idempotencyKey ? { idempotencyKey } : {})
   };
 
   try {
@@ -87,12 +123,6 @@ export async function POST(req: Request) {
 
   const token = signPayload(payload);
   const res = NextResponse.json({ ok: true });
-  res.cookies.set(OTP_COOKIE, token, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: OTP_TTL_SECONDS
-  });
+  res.cookies.set(OTP_COOKIE, token, cookieOpts);
   return res;
 }

@@ -26,7 +26,18 @@ export type OtpPayload = {
   /** ms epoch */
   expiresAt: number;
   attempts: number;
+  /**
+   * Client-supplied Idempotency-Key for the *request* call that created this
+   * payload. Used to deduplicate retried POSTs so we don't send a second
+   * email when the client retries on network failure / double-click.
+   */
+  idempotencyKey?: string;
 };
+
+/** Reject obviously malformed keys before we trust them. */
+export function isValidIdempotencyKey(k: unknown): k is string {
+  return typeof k === "string" && k.length >= 8 && k.length <= 128 && /^[\w.\-:]+$/.test(k);
+}
 
 export const OTP_COOKIE = "gplex_otp";
 export const USER_COOKIE = "gplex_user";
