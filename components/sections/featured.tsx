@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { LoopVideo } from "@/components/video";
 import { VIDEOS } from "@/lib/assets";
@@ -34,13 +35,15 @@ export function FeaturedVideoSection() {
               starts with a question, and every answer opens a new door to innovation.
             </p>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="liquid-glass rounded-full px-8 py-3 text-white text-sm font-medium self-start md:self-end"
-          >
-            Explore more
-          </motion.button>
+          <Link href="/about" className="self-start md:self-end">
+            <motion.span
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="inline-block liquid-glass rounded-full px-8 py-3 text-white text-sm font-medium"
+            >
+              Explore more
+            </motion.span>
+          </Link>
         </div>
       </motion.div>
     </section>
