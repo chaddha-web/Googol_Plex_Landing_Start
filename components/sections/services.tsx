@@ -1,58 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "@/components/icons";
 import { LoopVideo } from "@/components/video";
-import { VIDEOS } from "@/lib/assets";
+import { SERVICES, type Service } from "@/lib/services";
 
-type Card = {
-  tag: string;
-  title: string;
-  body: string;
-  video: string;
-  placeholder: string;
-};
-
-const cards: Card[] = [
-  {
-    tag: "Strategy",
-    title: "Research & Insight",
-    body: "We dig deep into data, culture, and human behavior to surface the insights that drive meaningful, lasting change.",
-    video: VIDEOS.serviceStrategy,
-    placeholder: "placeholder-video-4"
-  },
-  {
-    tag: "Craft",
-    title: "Design & Execution",
-    body: "From concept to launch, we obsess over every detail to deliver experiences that feel effortless and look extraordinary.",
-    video: VIDEOS.serviceCraft,
-    placeholder: "placeholder-video-5"
-  },
-  {
-    tag: "Story",
-    title: "Narrative & Brand",
-    body: "We help teams find the words, tone, and visual language that make their work feel inevitable, not invented.",
-    video: VIDEOS.philosophy,
-    placeholder: "placeholder-video-3"
-  },
-  {
-    tag: "Build",
-    title: "Product & Platform",
-    body: "From prototype to production, we build interfaces that are fast, accessible, and a pleasure to use every day.",
-    video: VIDEOS.featured,
-    placeholder: "placeholder-video-2"
-  },
-  {
-    tag: "Care",
-    title: "Growth & Iteration",
-    body: "After launch, we stay close — measuring what matters, sharpening what works, and quietly retiring what doesn’t.",
-    video: VIDEOS.serviceCare,
-    placeholder: "placeholder-video"
-  }
-];
-
-const N = cards.length;
+const N = SERVICES.length;
 
 function CardView({
   c,
@@ -60,7 +15,7 @@ function CardView({
   pageKey,
   side
 }: {
-  c: Card;
+  c: Service;
   index: number;
   pageKey: number;
   side: "L" | "R";
@@ -72,35 +27,40 @@ function CardView({
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, ease: "easeOut" }}
-      className="group liquid-glass rounded-3xl overflow-hidden"
     >
-      <div className="relative aspect-video overflow-hidden">
-        <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105">
-          <LoopVideo
-            src={c.video}
-            placeholderClass={c.placeholder}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
-        <div className="absolute top-4 left-4 liquid-glass rounded-full px-3 py-1 text-white text-xs font-medium tracking-widest">
-          {number}
-        </div>
-      </div>
-      <div className="p-6 md:p-8">
-        <div className="flex items-start justify-between mb-4">
-          <p className="text-white/40 text-xs tracking-widest uppercase">
-            {c.tag}
-          </p>
-          <div className="liquid-glass rounded-full p-2 text-white">
-            <ArrowUpRight size={16} />
+      <Link
+        href={`/services/${c.slug}`}
+        aria-label={`${c.title} — read more`}
+        className="group liquid-glass rounded-3xl overflow-hidden block hover:bg-white/[0.02] transition-colors"
+      >
+        <div className="relative aspect-video overflow-hidden">
+          <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105">
+            <LoopVideo
+              src={c.video}
+              placeholderClass={c.placeholder}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
+          <div className="absolute top-4 left-4 liquid-glass rounded-full px-3 py-1 text-white text-xs font-medium tracking-widest">
+            {number}
           </div>
         </div>
-        <h3 className="text-white text-xl md:text-2xl mb-3 tracking-tight font-serif">
-          {c.title}
-        </h3>
-        <p className="text-white/50 text-sm leading-relaxed">{c.body}</p>
-      </div>
+        <div className="p-6 md:p-8">
+          <div className="flex items-start justify-between mb-4">
+            <p className="text-white/40 text-xs tracking-widest uppercase">
+              {c.tag}
+            </p>
+            <div className="liquid-glass rounded-full p-2 text-white group-hover:bg-white/10 transition-colors">
+              <ArrowUpRight size={16} />
+            </div>
+          </div>
+          <h3 className="text-white text-xl md:text-2xl mb-3 tracking-tight font-serif">
+            {c.title}
+          </h3>
+          <p className="text-white/50 text-sm leading-relaxed">{c.body}</p>
+        </div>
+      </Link>
     </motion.div>
   );
 }
@@ -134,13 +94,13 @@ export function ServicesSection() {
         {/* Pair of cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           <CardView
-            c={cards[leftIdx]!}
+            c={SERVICES[leftIdx]!}
             index={leftIdx}
             pageKey={pairIdx}
             side="L"
           />
           <CardView
-            c={cards[rightIdx]!}
+            c={SERVICES[rightIdx]!}
             index={rightIdx}
             pageKey={pairIdx}
             side="R"
@@ -159,7 +119,7 @@ export function ServicesSection() {
 
           {/* Pair indicator: active pair lights two adjacent dashes */}
           <div className="flex items-center gap-2">
-            {cards.map((_, i) => {
+            {SERVICES.map((_, i) => {
               const onPair = i === pairIdx || i === (pairIdx + 1) % N;
               return (
                 <button
