@@ -31,9 +31,24 @@ Design originally prototyped in [Claude Design](https://claude.ai/design) and po
 
 ```bash
 npm install
+cp .env.example .env.local   # then fill in RESEND_API_KEY + OTP_SECRET
 npm run dev
 # → http://localhost:3010
 ```
+
+## Environment variables
+
+The OTP flow on `/signup` and `/login` is powered by [Resend](https://resend.com).
+See `.env.example` for the full list. Quick summary:
+
+| Var | Required | Notes |
+|---|---|---|
+| `RESEND_API_KEY` | prod | Without it, `/api/otp/request` logs the code to the **server console** instead of emailing (great for local dev). |
+| `RESEND_FROM` | prod | A verified-domain sender like `GoogolPlex <hello@yourdomain.com>`. Defaults to Resend's shared sandbox sender. |
+| `OTP_SECRET` | prod | HMAC secret for signing the OTP cookie. Generate with `openssl rand -hex 32`. |
+
+Set these in **Vercel → Project → Settings → Environment Variables** for the
+deployed site. Never commit the real values.
 
 ## Build
 

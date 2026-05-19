@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { AuthHero } from "@/components/auth-hero";
@@ -8,11 +9,91 @@ import { OtpCells } from "@/components/otp-cells";
 import { ArrowLeft } from "@/components/icons";
 
 function FormRight() {
+  const router = useRouter();
   const [stage, setStage] = useState<"request" | "verify">("request");
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleRequest(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await fetch("/api/otp/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          mode: "signup",
+          firstName,
+          lastName
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Could not send the code.");
+        return;
+      }
+      setStage("verify");
+      setOtp(["", "", "", "", "", ""]);
+    } catch {
+      setError("Network error — please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleVerify(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await fetch("/api/otp/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: otp.join("") })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Could not verify the code.");
+        if (data.attemptsLeft === undefined) setOtp(["", "", "", "", "", ""]);
+        return;
+      }
+      router.push("/");
+    } catch {
+      setError("Network error — please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleResend() {
+    setOtp(["", "", "", "", "", ""]);
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await fetch("/api/otp/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          mode: "signup",
+          firstName,
+          lastName
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) setError(data.error || "Could not resend.");
+    } catch {
+      setError("Network error.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center py-12 lg:py-6 px-4 sm:px-12 lg:px-16 xl:px-24 overflow-y-auto lg:overflow-hidden">
@@ -41,13 +122,7 @@ function FormRight() {
               </p>
             </div>
 
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                setStage("verify");
-              }}
-              className="space-y-5"
-            >
+            <form onSubmit={handleRequest} className="space-y-5">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label
@@ -103,11 +178,16 @@ function FormRight() {
                 />
               </div>
 
+              {error && (
+                <p className="text-red-300/90 text-xs leading-relaxed">{error}</p>
+              )}
+
               <button
                 type="submit"
-                className="w-full h-14 bg-white text-black font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all mt-4"
+                disabled={loading}
+                className="w-full h-14 bg-white text-black font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Request OTP
+                {loading ? "Sending…" : "Request OTP"}
               </button>
             </form>
           </>
@@ -123,18 +203,20 @@ function FormRight() {
               </p>
             </div>
 
-            <form
-              onSubmit={(e) => e.preventDefault()}
-              className="space-y-6"
-            >
+            <form onSubmit={handleVerify} className="space-y-6">
               <OtpCells value={otp} onChange={setOtp} />
+
+              {error && (
+                <p className="text-red-300/90 text-xs text-center">{error}</p>
+              )}
 
               <p className="text-xs text-white/40 text-center">
                 Didn&apos;t get it?{" "}
                 <button
                   type="button"
-                  onClick={() => setOtp(["", "", "", "", "", ""])}
-                  className="text-white hover:underline"
+                  onClick={handleResend}
+                  disabled={loading}
+                  className="text-white hover:underline disabled:opacity-50"
                 >
                   Resend code
                 </button>
@@ -142,10 +224,10 @@ function FormRight() {
 
               <button
                 type="submit"
-                disabled={otp.some((d) => !d)}
+                disabled={otp.some((d) => !d) || loading}
                 className="w-full h-14 bg-white text-black font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                Verify & continue
+                {loading ? "Verifying…" : "Verify & continue"}
               </button>
 
               <button
@@ -153,6 +235,7 @@ function FormRight() {
                 onClick={() => {
                   setStage("request");
                   setOtp(["", "", "", "", "", ""]);
+                  setError(null);
                 }}
                 className="w-full text-xs text-white/50 hover:text-white transition-colors"
               >
